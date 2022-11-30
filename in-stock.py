@@ -25,7 +25,7 @@ class InStock:
 
   def parseCmdLineOptions(self):
     try:
-        opts, _ = getopt.getopt(sys.argv[1:], "hfv", ["help", "verbose", "file="])
+        opts, _ = getopt.getopt(sys.argv[1:], "hf:v", ["help", "verbose", "file="])
     except getopt.GetoptError as err:
         print(f'{err}\n')
         self.printHelp()
@@ -44,6 +44,27 @@ class InStock:
 
   def parseSettingsFromFile(self):
     print(f"Parsing '{self.options.parseFile}'...")
+    try:
+      with open(self.options.parseFile, 'r') as file:
+        try:
+          line = file.readline()
+          while line:
+            parsedLine = line.split(':', 1)
+            if len(parsedLine) < 2:
+              continue
+            if parsedLine[0] in ['url','notExistsXPATH', 'cooldownMs', 'email']:
+              eval(f'self.options.{parsedLine[0]} = "{parsedLine[1].strip()}"')
+          self.options.cooldownMs = min(int(self.options.cooldownMs), self.MIN_COOLDOWN_MS)
+        finally:
+          file.close()
+    except IOError as e:
+      print(f'Could not open file for reading: {e}')
+    except Exception as e:
+      print(f'Error parsing file: {e}')
+      exit(1)
+    if not self.options.isValid():
+      print("Parsed file is not valid. Check that url, notExistsXPATH, and cooldownMs are set correctly.")
+      exit(1)
 
   def parseSettingsFromUserInput(self):
     try:
