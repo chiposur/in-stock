@@ -22,13 +22,13 @@ class InStock:
 
   def parseCmdLineOptions(self):
     try:
-        opts, _ = getopt.getopt(sys.argv[1:], "hf:v", ["help", "file="])
+        opts, _ = getopt.getopt(sys.argv[1:], "hfv", ["help", "verbose", "file="])
     except getopt.GetoptError as err:
         print(f'{err}\n')
         self.printHelp()
         exit(2)
     for o, a in opts:
-        if o == "-v":
+        if o in ("-v", "--verbose"):
             self.options.verbose = True
         elif o in ("-h", "--help"):
             self.printHelp()
@@ -64,11 +64,12 @@ class InStock:
     print("#########")
     print("© Chip Osur 2022\n")
     print("A utility for retrieving web docs and checking if an item is in stock.\n")
-    print("-h, -help: Show utility help")
     print("-f, -file: Parse required and optional settings from file")
+    print("-h, -help: Show utility help")
+    print("       -v: Verbose output when running")
 
   def start(self):
-    print("Starting check...")
+    print("Running...")
     self.running = True
     while self.running:
       self.checkAvailability()
@@ -76,23 +77,27 @@ class InStock:
     self.notify()
 
   def checkAvailability(self):
-    print("Checking availability...")
-    print(f"Retrieving '{self.url}'...")
+    self.vPrint("Checking availability...")
+    self.vPrint(f"Retrieving '{self.url}'...")
     try:
       req = requests.get(self.url, timeout=(8, 30))
     except requests.exceptions.ReadTimeout:
-      print("Timeout reading request...")
+      self.vPrint("Timeout reading request...")
       return
     except requests.exceptions.MissingSchema:
       print("Missing schema. Did you forget to specify http/s?")
       exit(1)
     if req.status_code == 200:
-      print("Request successful, parsing...")
+      self.vPrint("Request successful, parsing...")
     else:
-      print(f'Request failed with error code {req.status_code}')
+      self.vPrint(f'Request failed with error code {req.status_code}')
 
   def notify(self):
     pass
+
+  def vPrint(self, s):
+    if self.options.verbose:
+      print(s)
 
 if __name__ == "__main__":
     inStock = InStock()
