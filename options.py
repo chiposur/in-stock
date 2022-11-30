@@ -5,6 +5,6 @@ class Options:
       self.parseFile = None
       # Settings
       self.url = None
-      self.selector = None
+      self.notExistsXPATH = None
       self.cooldownMs = None
       self.email = None

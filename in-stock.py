@@ -1,7 +1,10 @@
+from datetime import datetime
 import getopt
+from io import StringIO
 import requests
 import sys
 from time import sleep
+from lxml import etree
 
 from options import Options
 
@@ -45,15 +48,17 @@ class InStock:
   def parseSettingsFromUserInput(self):
     try:
       print("Enter URL:")
-      self.url = str(input())
-      if not self.url:
+      self.options.url = str(input())
+      if not self.options.url:
         raise Exception("URL is required")
-      print("Enter selector:")
-      self.selector = str(input())
+      print("Enter XPATH that indicates item is unavailable. For more info see --help:")
+      self.options.notExistsXPATH = str(input())
+      if not self.options.notExistsXPATH:
+        raise Exception("Item unavailable XPATH is required")
       print("Enter cooldown time in ms:")
-      self.cooldownMs = max(int(input()), self.MIN_COOLDOWN_MS)
+      self.options.cooldownMs = max(int(input()), self.MIN_COOLDOWN_MS)
       print("Enter email to notify:")
-      self.email = str(input())
+      self.options.email = str(input())
     except Exception as e:
       print(f'Error parsing user input: {e}')
       exit(1)
@@ -73,24 +78,33 @@ class InStock:
     self.running = True
     while self.running:
       self.checkAvailability()
-      sleep(self.cooldownMs / 1000)
+      sleep(self.options.cooldownMs / 1000)
     self.notify()
 
   def checkAvailability(self):
     self.vPrint("Checking availability...")
-    self.vPrint(f"Retrieving '{self.url}'...")
+    self.vPrint(f"Retrieving '{self.options.url}'...")
     try:
-      req = requests.get(self.url, timeout=(8, 30))
+      req = requests.get(self.options.url, timeout=(8, 30))
+      if req.status_code == 200:
+        self.vPrint("Request successful, parsing...")
+      else:
+        self.vPrint(f'Request failed with error code {req.status_code}')
+        return
+      parser = etree.HTMLParser()
+      root = etree.parse(StringIO(req.text), parser).getroot()
+      self.inStock = len(root.xpath(self.options.notExistsXPATH)) == 0
+      if self.inStock:
+        self.running = False
+        print(f'{datetime.now()}: XPATH does not exist. Item may be in stock, stopping.')
     except requests.exceptions.ReadTimeout:
       self.vPrint("Timeout reading request...")
       return
     except requests.exceptions.MissingSchema:
       print("Missing schema. Did you forget to specify http/s?")
       exit(1)
-    if req.status_code == 200:
-      self.vPrint("Request successful, parsing...")
-    else:
-      self.vPrint(f'Request failed with error code {req.status_code}')
+    except etree.XPathEvalError as e:
+      print(f'Error evaluating XPATH: {e}')
 
   def notify(self):
     pass
