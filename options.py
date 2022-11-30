@@ -9,8 +9,17 @@ class Options:
       self.cooldownMs = None
       self.email = None
 
+  def isUrlValid(self):
+    return len(str(self.url)) > 0
+
+  def isNotExistsXPATHValid(self):
+    return len(str(self.notExistsXPATH)) > 0
+
+  def isCooldownMsValid(self):
+    return int(self.cooldownMs) >= 1000
+
   def isValid(self):
     try:
-      return len(str(self.url)) > 0 and len(str(self.notExistsXPATH)) > 0 and int(self.cooldownMs) > 1000
+      return self.isUrlValid() and self.isNotExistsXPATHValid() and self.isCooldownMsValid()
     except:
       return False

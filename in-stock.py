@@ -52,9 +52,17 @@ class InStock:
             parsedLine = line.split(':', 1)
             if len(parsedLine) < 2:
               continue
-            if parsedLine[0] in ['url','notExistsXPATH', 'cooldownMs', 'email']:
-              eval(f'self.options.{parsedLine[0]} = "{parsedLine[1].strip()}"')
-          self.options.cooldownMs = min(int(self.options.cooldownMs), self.MIN_COOLDOWN_MS)
+            field = parsedLine[0]
+            value = parsedLine[1].strip()
+            if field == 'url':
+              self.options.url = value
+            elif field == 'notExistsXPATH':
+              self.options.notExistsXPATH = value
+            elif field == 'cooldownMs':
+              self.options.cooldownMs = max(int(value), self.MIN_COOLDOWN_MS)
+            elif field == 'email':
+              self.options.email = value
+            line = file.readline()
         finally:
           file.close()
     except IOError as e:
@@ -92,7 +100,13 @@ class InStock:
     print("A utility for retrieving web docs and checking if an item is in stock.\n")
     print("-f, -file: Parse required and optional settings from file")
     print("-h, -help: Show utility help")
-    print("       -v: Verbose output when running")
+    print("       -v: Verbose output when running\n")
+    print("Sample Settings File")
+    print("--------------------")
+    print("url: https://www.example.com/store/products/popular-product/")
+    print("notExistsXPATH: //span[text()=\"Sold out\"]")
+    print("cooldownMs: 3000")
+    print("email: chip@example.com")
 
   def start(self):
     print("Running...")
