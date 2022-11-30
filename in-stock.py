@@ -1,14 +1,48 @@
+import getopt
 import requests
+import sys
 from time import sleep
+
+from options import Options
 
 class InStock:
   MIN_COOLDOWN_MS = 1000
 
   def __init__(self):
+    self.options = Options()
     self.setup()
     self.start()
 
   def setup(self):
+    self.parseCmdLineOptions()
+    if self.options.parseFile:
+      self.parseSettingsFromFile()
+    else:
+      self.parseSettingsFromUserInput()
+
+  def parseCmdLineOptions(self):
+    try:
+        opts, _ = getopt.getopt(sys.argv[1:], "hf:v", ["help", "file="])
+    except getopt.GetoptError as err:
+        print(f'{err}\n')
+        self.printHelp()
+        exit(2)
+    for o, a in opts:
+        if o == "-v":
+            self.options.verbose = True
+        elif o in ("-h", "--help"):
+            self.printHelp()
+            sys.exit()
+        elif o in ("-f", "--file"):
+            if len(a) > 0:
+              self.options.parseFile = a
+        else:
+            assert False, "unhandled option"
+
+  def parseSettingsFromFile(self):
+    print(f"Parsing '{self.options.parseFile}'...")
+
+  def parseSettingsFromUserInput(self):
     try:
       print("Enter URL:")
       self.url = str(input())
@@ -21,8 +55,17 @@ class InStock:
       print("Enter email to notify:")
       self.email = str(input())
     except Exception as e:
-      print(f'Error parsing args: {e}')
+      print(f'Error parsing user input: {e}')
       exit(1)
+
+  def printHelp(self):
+    print("#########")
+    print("#InStock#")
+    print("#########")
+    print("© Chip Osur 2022\n")
+    print("A utility for retrieving web docs and checking if an item is in stock.\n")
+    print("-h, -help: Show utility help")
+    print("-f, -file: Parse required and optional settings from file")
 
   def start(self):
     print("Starting check...")
