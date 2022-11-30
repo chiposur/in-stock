@@ -80,9 +80,12 @@ class InStock:
     print(f"Retrieving '{self.url}'...")
     try:
       req = requests.get(self.url, timeout=(8, 30))
-    except requests.exceptions.ReadTimeout as e:
-      print(f'Timeout reading request...')
+    except requests.exceptions.ReadTimeout:
+      print("Timeout reading request...")
       return
+    except requests.exceptions.MissingSchema:
+      print("Missing schema. Did you forget to specify http/s?")
+      exit(1)
     if req.status_code == 200:
       print("Request successful, parsing...")
     else:
