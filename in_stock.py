@@ -1,10 +1,13 @@
 from datetime import datetime
+from email.mime.text import MIMEText
 import getopt
 from io import StringIO
+from lxml import etree
+import os
 import requests
 import sys
 from time import sleep
-from lxml import etree
+from smtplib import SMTP
 
 from options import Options
 
@@ -62,6 +65,10 @@ class InStock:
               self.options.cooldownMs = max(int(value), self.MIN_COOLDOWN_MS)
             elif field == 'email':
               self.options.email = value
+            elif field == 'smtpServer':
+              self.options.smtpServer = value
+            elif field == 'smtpPort':
+              self.options.smtpPort = int(value)
             line = file.readline()
         finally:
           file.close()
@@ -88,6 +95,12 @@ class InStock:
       self.options.cooldownMs = max(int(input()), self.MIN_COOLDOWN_MS)
       print("Enter email to notify:")
       self.options.email = str(input())
+      print("Enter SMTP server:")
+      self.options.smtpServer = str(input())
+      print("Enter SMTP server port (default :587):")
+      port = input()
+      if port:
+        self.options.smtpPort = int(input())
     except Exception as e:
       print(f'Error parsing user input: {e}')
       exit(1)
@@ -101,12 +114,18 @@ class InStock:
     print("-f, -file: Parse required and optional settings from file")
     print("-h, -help: Show utility help")
     print("       -v: Verbose output when running\n")
+    print("Environment Variables")
+    print("---------------------")
+    print("SMTP_SERVER_USERNAME")
+    print("SMTP_SERVER_PASSWORD\n")
     print("Sample Settings File")
     print("--------------------")
     print("url: https://www.example.com/store/products/popular-product/")
     print("notExistsXPATH: //span[text()=\"Sold out\"]")
     print("cooldownMs: 3000")
     print("email: chip@example.com")
+    print("smtpServer: smtp.example.com")
+    print("smtpPort: 587")
 
   def start(self):
     print("Running...")
@@ -131,7 +150,8 @@ class InStock:
       self.inStock = len(root.xpath(self.options.notExistsXPATH)) == 0
       if self.inStock:
         self.running = False
-        print(f'{datetime.now()}: XPATH does not exist. Item may be in stock, stopping.')
+        self.finishedAt = datetime.now()
+        print(f'{self.finishedAt}: XPATH does not exist. Item may be in stock, stopping.')
     except requests.exceptions.ReadTimeout:
       self.vPrint("Timeout reading request...")
       return
@@ -142,7 +162,26 @@ class InStock:
       print(f'Error evaluating XPATH: {e}')
 
   def notify(self):
-    pass
+    try:
+      body = f'InStock finished running and item may be in stock. Check the URL for confirmation: {self.options.url}' \
+        f'Time: {self.finishedAt}' \
+        f'XPATH: {self.options.notExistsXPATH}'
+      msg = MIMEText(body)
+      fromAddr = "noreply@example.com"
+      msg['Subject'] = "InStock Alert"
+      msg['From'] = fromAddr
+      msg['To'] = self.options.email
+      with SMTP(self.options.smtpServer, self.options.smtpPort) as smtpServer:
+        username = os.environ['SMTP_SERVER_USERNAME']
+        password = os.environ['SMTP_SERVER_PASSWORD']
+        smtpServer.starttls()
+        smtpServer.login(username, password)
+        smtpServer.sendmail(fromAddr, self.options.email, msg.as_string())
+    except Exception as e:
+      print(
+        f'Sending email to {self.options.email} failed: {e}\n' \
+        f'SMTP Server: {self.options.smtpServer}\n' \
+        f'SMTP Port: {self.options.smtpPort}')
 
   def vPrint(self, s):
     if self.options.verbose:

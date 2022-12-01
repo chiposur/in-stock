@@ -8,6 +8,8 @@ class Options:
       self.notExistsXPATH = None
       self.cooldownMs = None
       self.email = None
+      self.smtpServer = None
+      self.smtpPort = 587
 
   def isUrlValid(self):
     return len(str(self.url)) > 0
