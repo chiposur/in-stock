@@ -167,7 +167,7 @@ class InStock:
         f'Time: {self.finishedAt}' \
         f'XPATH: {self.options.notExistsXPATH}'
       msg = MIMEText(body)
-      fromAddr = "noreply@example.com"
+      fromAddr = "noreply@InStock.com"
       msg['Subject'] = "InStock Alert"
       msg['From'] = fromAddr
       msg['To'] = self.options.email
@@ -176,7 +176,7 @@ class InStock:
         password = os.environ['SMTP_SERVER_PASSWORD']
         smtpServer.starttls()
         smtpServer.login(username, password)
-        smtpServer.sendmail(fromAddr, self.options.email, msg.as_string())
+        smtpServer.sendmail(self.options.email, self.options.email, msg.as_string())
     except Exception as e:
       print(
         f'Sending email to {self.options.email} failed: {e}\n' \
