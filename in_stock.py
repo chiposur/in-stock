@@ -5,9 +5,9 @@ from io import StringIO
 from lxml import etree
 import os
 import requests
+from smtplib import SMTP
 import sys
 from time import sleep
-from smtplib import SMTP
 
 from options import Options
 
