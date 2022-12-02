@@ -10,18 +10,18 @@ This program uses XPATH expressions to search for paths indicating item availabi
 
 >`-f, -file`: &nbsp;Parse required and optional settings from file  
 >`-h, -help`: &nbsp;Show utility help  
->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-v`: &nbsp;Verbose output when running
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-v`: &nbsp;Verbose output when running  
 
 ## Environment Variables
 
 >`SMTP_SERVER_USERNAME=chip@example.com`  
->`SMTP_SERVER_PASSWORD=********`
+>`SMTP_SERVER_PASSWORD=********`  
 
 ## Sample Settings File
 
->**url:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`https://www.example.com/store/products/popular-product/`
+>**url:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`https://www.example.com/store/products/popular-product/`  
 >**notExistsXPATH:** &nbsp;&nbsp;`//span[text()=\"Sold out\"]`  
 >**cooldownMs:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`3000`  
 >**email:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`chip@example.com`  
 >**smtpServer:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`smtp.example.com`  
->**smtpPort:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`587`
+>**smtpPort:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`587`  
