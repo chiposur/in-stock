@@ -32,7 +32,7 @@ class InStock:
     except getopt.GetoptError as err:
         print(f'{err}\n')
         self.printHelp()
-        exit(2)
+        sys.exit(1)
     for o, a in opts:
         if o in ("-v", "--verbose"):
             self.options.verbose = True
@@ -76,10 +76,10 @@ class InStock:
       print(f'Could not open file for reading: {e}')
     except Exception as e:
       print(f'Error parsing file: {e}')
-      exit(1)
+      sys.exit(1)
     if not self.options.isValid():
       print("Parsed file is not valid. Check that url, notExistsXPATH, and cooldownMs are set correctly.")
-      exit(1)
+      sys.exit(1)
 
   def parseSettingsFromUserInput(self):
     try:
@@ -103,7 +103,7 @@ class InStock:
         self.options.smtpPort = int(input())
     except Exception as e:
       print(f'Error parsing user input: {e}')
-      exit(1)
+      sys.exit(1)
 
   def printHelp(self):
     print("#########")
@@ -157,7 +157,7 @@ class InStock:
       return
     except requests.exceptions.MissingSchema:
       print("Missing schema. Did you forget to specify http/s?")
-      exit(1)
+      sys.exit(1)
     except etree.XPathEvalError as e:
       print(f'Error evaluating XPATH: {e}')
 
