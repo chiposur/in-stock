@@ -8,9 +8,11 @@ This program uses XPATH expressions to search for paths indicating item availabi
 
 ## Command Line Options
 
->`-f, -file`: &nbsp;Parse required and optional settings from file  
->`-h, -help`: &nbsp;Show utility help  
->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-v`: &nbsp;Verbose output when running  
+| Command     | Description                                    |
+|------------:| -----------------------------------------------|
+| `-f, -file` | Parse required and optional settings from file |
+| `-h, -help` | Show utility help                              |
+| `-v`        | Verbose output when running                    |
 
 ## Environment Variables
 
