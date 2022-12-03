@@ -49,7 +49,6 @@ class InStock:
     print(f"Parsing '{self.options.parseFile}'...")
     try:
       with open(self.options.parseFile, 'r') as file:
-        try:
           line = file.readline()
           while line:
             parsedLine = line.split(':', 1)
@@ -70,8 +69,6 @@ class InStock:
             elif field == 'smtpPort':
               self.options.smtpPort = int(value)
             line = file.readline()
-        finally:
-          file.close()
     except IOError as e:
       print(f'Could not open file for reading: {e}')
     except Exception as e:
