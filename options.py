@@ -3,7 +3,7 @@ class Options:
       # Command Line Settings
       self.verbose = False
       self.parseFile = None
-      # Settings
+      # Configuration Settings
       self.url = None
       self.notExistsXPATH = None
       self.cooldownMs = None
