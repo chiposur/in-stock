@@ -22,7 +22,7 @@ This program uses XPATH expressions to search for paths indicating item availabi
 ## Sample Settings File
 
 >**url:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`https://www.example.com/store/products/popular-product/`  
->**notExistsXPATH:** &nbsp;&nbsp;`//span[text()=\"Sold out\"]`  
+>**notExistsXPATH:** &nbsp;&nbsp;`//span[text()="Sold out"]`  
 >**cooldownMs:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`3000`  
 >**email:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`chip@example.com`  
 >**smtpServer:** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`smtp.example.com`  
