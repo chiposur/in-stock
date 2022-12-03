@@ -64,7 +64,7 @@ class InStock:
             elif field == 'cooldownMs':
               self.options.cooldownMs = max(int(value), self.MIN_COOLDOWN_MS)
             elif field == 'email':
-              self.options.email = value
+              self.options.notifyEmail = value
             elif field == 'smtpServer':
               self.options.smtpServer = value
             elif field == 'smtpPort':
@@ -94,13 +94,14 @@ class InStock:
       print("Enter cooldown time in ms:")
       self.options.cooldownMs = max(int(input()), self.MIN_COOLDOWN_MS)
       print("Enter email to notify:")
-      self.options.email = str(input())
-      print("Enter SMTP server:")
-      self.options.smtpServer = str(input())
-      print("Enter SMTP server port (default :587):")
-      port = input()
-      if port:
-        self.options.smtpPort = int(input())
+      self.options.notifyEmail = str(input())
+      if self.options.notifyEmail:
+        print("Enter SMTP server:")
+        self.options.smtpServer = str(input())
+        print("Enter SMTP server port (default :587):")
+        port = input()
+        if port:
+          self.options.smtpPort = int(input())
     except Exception as e:
       print(f'Error parsing user input: {e}')
       sys.exit(1)
@@ -133,7 +134,8 @@ class InStock:
     while self.running:
       self.checkAvailability()
       sleep(self.options.cooldownMs / 1000)
-    self.notify()
+    if self.options.notifyEmail:
+      self.notify()
 
   def checkAvailability(self):
     self.vPrint("Checking availability...")
@@ -170,16 +172,16 @@ class InStock:
       fromAddr = "noreply@InStock.com"
       msg['Subject'] = "InStock Alert"
       msg['From'] = fromAddr
-      msg['To'] = self.options.email
+      msg['To'] = self.options.notifyEmail
       with SMTP(self.options.smtpServer, self.options.smtpPort) as smtpServer:
         username = os.environ['SMTP_SERVER_USERNAME']
         password = os.environ['SMTP_SERVER_PASSWORD']
         smtpServer.starttls()
         smtpServer.login(username, password)
-        smtpServer.sendmail(self.options.email, self.options.email, msg.as_string())
+        smtpServer.sendmail(self.options.notifyEmail, self.options.notifyEmail, msg.as_string())
     except Exception as e:
       print(
-        f'Sending email to {self.options.email} failed: {e}\n' \
+        f'Sending email to {self.options.notifyEmail} failed: {e}\n' \
         f'SMTP Server: {self.options.smtpServer}\n' \
         f'SMTP Port: {self.options.smtpPort}')
 

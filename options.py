@@ -7,7 +7,7 @@ class Options:
       self.url = None
       self.notExistsXPATH = None
       self.cooldownMs = None
-      self.email = None
+      self.notifyEmail = None
       self.smtpServer = None
       self.smtpPort = 587
 
