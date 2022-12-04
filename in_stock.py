@@ -98,7 +98,7 @@ class InStock:
         print("Enter SMTP server port (default :587):")
         port = input()
         if port:
-          self.options.smtpPort = int(input())
+          self.options.smtpPort = int(port)
     except Exception as e:
       print(f'Error parsing user input: {e}')
       sys.exit(1)
